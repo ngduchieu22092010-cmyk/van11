@@ -1,0 +1,438 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kho Báu Lịch Sử & Văn Học</title>
+
+<style>
+*{box-sizing:border-box}
+:root{
+  --gold:#ffdc87;
+  --cream:#fff5df;
+  --panel:rgba(19,15,20,.88);
+}
+body{
+  margin:0;min-height:100vh;overflow-x:hidden;
+  color:var(--cream);
+  font-family:Arial,"Segoe UI",Tahoma,sans-serif;
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(255,177,65,.3),transparent 48%),
+    radial-gradient(ellipse at 0% 100%,rgba(125,57,24,.4),transparent 45%),
+    linear-gradient(135deg,#080d1b,#29170f 55%,#100b0a);
+  background-attachment:fixed;
+}
+body::before{
+  content:"";position:fixed;inset:-50%;z-index:-2;pointer-events:none;
+  background:conic-gradient(from 0deg,transparent,rgba(255,190,75,.1),transparent 30%,rgba(255,225,155,.08),transparent 70%);
+  animation:lightmove 28s linear infinite;
+}
+body::after{
+  content:"✦　·　✧　　·　✦　　✧　·　✦";
+  position:fixed;inset:0;z-index:-1;pointer-events:none;
+  color:rgba(255,211,116,.45);font-size:22px;line-height:3.8;
+  letter-spacing:15px;word-spacing:20px;
+  animation:twinkle 4s ease-in-out infinite alternate;
+}
+@keyframes lightmove{to{transform:rotate(360deg)}}
+@keyframes twinkle{from{opacity:.2;transform:translateY(0)}to{opacity:.8;transform:translateY(-12px)}}
+.topbar{display:flex;justify-content:flex-end;padding:15px 20px 0}
+button{font-family:Arial,"Segoe UI",sans-serif;cursor:pointer}
+.sound-btn{
+  border:1px solid #d5a54d;border-radius:30px;padding:11px 17px;
+  color:var(--gold);background:#25170f;transition:.25s
+}
+.sound-btn:hover{background:#60401e;box-shadow:0 0 18px #d9a34b}
+.container{width:min(920px,94%);margin:auto;padding:15px 0 40px;text-align:center}
+.eyebrow{color:#e5b96b;text-transform:uppercase;letter-spacing:5px;font-size:12px;margin:10px}
+h1{
+  color:var(--gold);font-size:clamp(28px,5vw,46px);
+  text-shadow:0 0 12px #a96d26,0 0 30px rgba(255,190,60,.35);
+  line-height:1.2;margin:15px 0
+}
+h2{color:var(--gold);font-size:clamp(22px,4vw,30px);margin-top:0}
+.subtitle{color:#e4ceb0;line-height:1.7;max-width:650px;margin:0 auto 20px}
+.ornament{color:var(--gold);font-size:23px;letter-spacing:7px;margin:18px}
+.panel{
+  background:var(--panel);border:1px solid rgba(255,207,113,.75);
+  border-radius:20px;padding:clamp(18px,4vw,32px);
+  box-shadow:0 0 25px rgba(255,181,64,.12),0 18px 45px #0008,
+    inset 0 0 25px rgba(255,202,112,.04);
+  backdrop-filter:blur(9px);
+}
+.screen{display:none}
+.screen.active{display:block;animation:appear .4s ease}
+@keyframes appear{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.progress{color:#d8bd92;margin:12px 0 24px;font-size:14px}
+.box-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;max-width:680px;margin:25px auto}
+.treasure{
+  min-height:130px;padding:12px 5px;color:var(--gold);
+  border:2px solid #d6a84d;border-radius:15px;
+  background:linear-gradient(145deg,#815122,#29170e 60%,#583518);
+  box-shadow:0 6px 0 #160d08,inset 0 0 18px #ffd87522;
+  transition:transform .25s,box-shadow .25s;position:relative;overflow:hidden
+}
+.treasure::before{
+  content:"";position:absolute;top:-100%;left:-60%;width:45%;height:300%;
+  transform:rotate(25deg);background:linear-gradient(90deg,transparent,#fff6cb55,transparent);
+  transition:left .6s
+}
+.treasure:hover::before{left:130%}
+.treasure:hover{
+  transform:translateY(-7px) scale(1.04);
+  box-shadow:0 10px 0 #160d08,0 0 28px #ffcf6980
+}
+.chest{display:block;font-size:43px;margin-bottom:8px;filter:drop-shadow(0 0 6px #ffd87555)}
+.number{display:block;font-size:14px;font-weight:bold;letter-spacing:1px}
+.note{color:#cdbb9f;font-size:14px;line-height:1.7}
+.question-text{font-size:clamp(19px,3vw,24px);line-height:1.6;margin:22px 0;color:#fff7e5}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:left}
+.answer{
+  color:#fff3db;background:#302019;border:1px solid #876036;
+  border-radius:11px;padding:15px;line-height:1.5;text-align:left;
+  transition:.2s;font-size:16px
+}
+.answer:hover:not(:disabled){border-color:var(--gold);background:#50331d;transform:translateY(-2px)}
+.answer:disabled{cursor:default}
+.answer.correct{background:#173e2c;border-color:#64db91}
+.answer.wrong{background:#511d1d;border-color:#f07970}
+.feedback{min-height:30px;margin:20px 0 10px;font-size:17px;font-weight:bold;line-height:1.5}
+.feedback.good{color:#8af0a9}.feedback.bad{color:#ff9d94}
+.action-btn{
+  background:linear-gradient(135deg,#ffe49b,#d29a3e);color:#321b0a;
+  border:1px solid #ffe7a5;border-radius:30px;padding:13px 25px;
+  font-weight:bold;margin:8px;box-shadow:0 4px 15px #0004;transition:.2s
+}
+.action-btn:hover{transform:translateY(-3px);filter:brightness(1.1);box-shadow:0 0 20px #ffcf6980}
+.action-btn.secondary{color:var(--gold);background:#2c1c12;border-color:#98713d}
+.prize-icon{font-size:clamp(65px,13vw,105px);margin:15px 0;animation:glow 1.5s infinite alternate}
+@keyframes glow{from{transform:scale(1);filter:drop-shadow(0 0 5px #d9a64c)}to{transform:scale(1.08);filter:drop-shadow(0 0 25px #ffda78)}}
+.prize-name{color:var(--gold);font-size:clamp(25px,4vw,35px);margin:12px 0}
+.prize-desc{color:#e6d2af;line-height:1.7}
+.score{display:inline-block;padding:9px 15px;margin:8px;border:1px solid #876036;border-radius:30px;color:#f4d7a0;font-size:14px}
+.finish-icon{font-size:75px;margin:10px}
+footer{color:#bda17a;font-size:12px;padding:25px 10px 0;letter-spacing:2px}
+[hidden]{display:none!important}
+@media(max-width:560px){
+  .box-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .treasure{min-height:110px}.chest{font-size:36px}
+  .answers{grid-template-columns:1fr}
+  .topbar{padding-right:12px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+
+<body>
+<div class="topbar">
+  <button class="sound-btn" id="musicBtn" type="button">🎵 Bật nhạc</button>
+</div>
+
+<main class="container">
+  <div class="eyebrow">Hành trình tri thức</div>
+  <h1>KHO BÁU LỊCH SỬ<br>&amp; VĂN HỌC</h1>
+  <p class="subtitle">Bảy chiếc rương bí ẩn đang chờ người khám phá. Hãy chọn một chiếc rương, vượt qua thử thách và tìm kiếm phần thưởng!</p>
+  <div class="ornament">✦ ━━━ ✧ ━━━ ✦</div>
+
+  <section id="boardScreen" class="screen active">
+    <div class="panel">
+      <h2>⚜️ Chọn một chiếc rương ⚜️</h2>
+      <div class="progress" id="boardProgress"></div>
+      <div class="box-grid" id="boxGrid"></div>
+      <p class="note">Mỗi hộp chứa một câu hỏi và một phần thưởng bí mật.<br>Trả lời sai? Đừng lo, bạn có thể thử lại!</p>
+    </div>
+  </section>
+
+  <section id="questionScreen" class="screen">
+    <div class="panel">
+      <div class="progress" id="questionProgress"></div>
+      <h2>📜 Thử thách tri thức</h2>
+      <div class="question-text" id="questionText"></div>
+      <div class="answers" id="answers"></div>
+      <div class="feedback" id="feedback" aria-live="polite"></div>
+      <button class="action-btn" id="retryBtn" hidden type="button">↻ Thử lại</button>
+    </div>
+  </section>
+
+  <section id="prizeScreen" class="screen">
+    <div class="panel">
+      <h2>🏆 Chúc mừng nhà thám hiểm!</h2>
+      <p class="subtitle">Bạn đã vượt qua thử thách!</p>
+      <div class="prize-icon" id="prizeIcon">🎁</div>
+      <div class="prize-name" id="prizeName"></div>
+      <p class="prize-desc" id="prizeDesc"></p>
+      <div id="prizeStats"></div>
+      <button class="action-btn" id="continueBtn" type="button">Tiếp tục khám phá ➜</button>
+    </div>
+  </section>
+
+  <section id="finishScreen" class="screen">
+    <div class="panel">
+      <div class="finish-icon">👑</div>
+      <h2>Hành trình hoàn tất!</h2>
+      <p class="subtitle">Bạn đã khám phá toàn bộ bảy chiếc rương bí ẩn. Tri thức chính là kho báu quý giá nhất!</p>
+      <div id="finalStats"></div>
+      <button class="action-btn" id="replayBtn" type="button">↻ Chơi lại từ đầu</button>
+    </div>
+  </section>
+
+  <footer>KHO BÁU TRI THỨC • LỊCH SỬ • VĂN HỌC</footer>
+</main>
+
+<script>
+"use strict";
+
+const gameData = [
+  {
+    question:"Ai là người lãnh đạo cuộc khởi nghĩa Lam Sơn chống quân Minh?",
+    options:["Trần Hưng Đạo","Lê Lợi","Quang Trung","Ngô Quyền"],
+    correct:1,
+    prize:{icon:"👑",name:"Vương miện Lam Sơn",desc:"Biểu tượng của lòng dũng cảm và ý chí giành độc lập."}
+  },
+  {
+    question:"Tác phẩm Truyện Kiều là kiệt tác của đại thi hào nào?",
+    options:["Nguyễn Trãi","Hồ Xuân Hương","Nguyễn Du","Nguyễn Đình Chiểu"],
+    correct:2,
+    prize:{icon:"📚",name:"Cuốn sách vàng",desc:"Phần thưởng dành cho người trân trọng vẻ đẹp văn học Việt Nam."}
+  },
+  {
+    question:"Chiến thắng Bạch Đằng năm 938 gắn liền với tên tuổi ai?",
+    options:["Đinh Bộ Lĩnh","Lý Thường Kiệt","Ngô Quyền","Trần Quốc Tuấn"],
+    correct:2,
+    prize:{icon:"⚓",name:"Thanh kiếm Bạch Đằng",desc:"Biểu tượng của trí tuệ quân sự và tinh thần độc lập."}
+  },
+  {
+    question:"Ai là tác giả của bài thơ Đồng chí?",
+    options:["Chính Hữu","Tố Hữu","Huy Cận","Xuân Diệu"],
+    correct:0,
+    prize:{icon:"🕊️",name:"Ngọn lửa đồng đội",desc:"Tượng trưng cho tình đồng chí, đồng đội thiêng liêng."}
+  },
+  {
+    question:"Quốc hiệu Đại Việt được đặt dưới triều đại nào vào năm 1054?",
+    options:["Nhà Trần","Nhà Lý","Nhà Lê sơ","Nhà Nguyễn"],
+    correct:1,
+    prize:{icon:"🏛️",name:"Bảo vật Đại Việt",desc:"Một dấu ấn quan trọng trong lịch sử dân tộc."}
+  },
+  {
+    question:"Trong Truyện Kiều, Thúy Kiều là người như thế nào?",
+    options:["Chỉ giỏi võ nghệ","Không biết yêu thương","Tài sắc vẹn toàn, giàu lòng hiếu thảo","Là một vị tướng"],
+    correct:2,
+    prize:{icon:"🌸",name:"Hoa sen văn chương",desc:"Phần thưởng cho người cảm nhận vẻ đẹp tâm hồn và số phận nhân vật."}
+  },
+  {
+    question:"Ai đọc bản Tuyên ngôn Độc lập ngày 2/9/1945 tại Quảng trường Ba Đình?",
+    options:["Võ Nguyên Giáp","Phạm Văn Đồng","Hồ Chí Minh","Trường Chinh"],
+    correct:2,
+    prize:{icon:"🌟",name:"Ngôi sao độc lập",desc:"Biểu tượng của tự do và khát vọng độc lập dân tộc."}
+  }
+];
+
+/* ÂM THANH TỰ TẠO - KHÔNG CẦN FILE MP3 */
+let audioContext=null, masterGain=null, musicEnabled=false, musicTimer=null, musicStep=0;
+const musicBtn=document.getElementById("musicBtn");
+
+function initAudio(){
+  if(!audioContext){
+    const AudioClass=window.AudioContext||window.webkitAudioContext;
+    if(!AudioClass){
+      musicBtn.textContent="Trình duyệt không hỗ trợ âm thanh";
+      return false;
+    }
+    audioContext=new AudioClass();
+    masterGain=audioContext.createGain();
+    masterGain.gain.value=.55;
+    masterGain.connect(audioContext.destination);
+  }
+  if(audioContext.state==="suspended") audioContext.resume();
+  return true;
+}
+
+function tone(freq,duration,type="sine",volume=.08,delay=0,endFreq=null){
+  if(!audioContext||!masterGain)return;
+  const start=audioContext.currentTime+delay;
+  const osc=audioContext.createOscillator();
+  const gain=audioContext.createGain();
+  osc.type=type;
+  osc.frequency.setValueAtTime(freq,start);
+  if(endFreq) osc.frequency.exponentialRampToValueAtTime(endFreq,start+duration);
+  gain.gain.setValueAtTime(.0001,start);
+  gain.gain.exponentialRampToValueAtTime(Math.max(.0002,volume),start+.025);
+  gain.gain.exponentialRampToValueAtTime(.0001,start+duration);
+  osc.connect(gain);gain.connect(masterGain);
+  osc.start(start);osc.stop(start+duration+.03);
+}
+
+const melody=[196,246.94,293.66,392,349.23,293.66,246.94,220,196,246.94,329.63,392,440,392,329.63,293.66];
+const bass=[98,98,130.81,130.81,146.83,146.83,110,110];
+
+function playMusicStep(){
+  if(!musicEnabled||!audioContext)return;
+  const step=musicStep%melody.length;
+  tone(melody[step],.8,"triangle",.045);
+  if(step%2===0)tone(bass[(musicStep/2|0)%bass.length],1.2,"sawtooth",.018);
+  if(step%4===0)tone(melody[step]*1.5,1.1,"sine",.018,.04);
+  musicStep++;
+}
+function startMusic(){
+  if(!initAudio())return;
+  musicEnabled=true;
+  musicBtn.textContent="🎵 Tắt nhạc";
+  if(musicTimer)clearInterval(musicTimer);
+  playMusicStep();
+  musicTimer=setInterval(playMusicStep,430);
+}
+function stopMusic(){
+  musicEnabled=false;
+  musicBtn.textContent="🔇 Bật nhạc";
+  if(musicTimer)clearInterval(musicTimer);
+  musicTimer=null;
+}
+musicBtn.addEventListener("click",()=>musicEnabled?stopMusic():startMusic());
+
+function soundBox(){
+  if(!initAudio())return;
+  tone(180,.18,"triangle",.12,0,330);
+  tone(440,.22,"sine",.07,.1,600);
+}
+function soundCorrect(){
+  if(!initAudio())return;
+  [523.25,659.25,783.99,1046.5].forEach((n,i)=>tone(n,.5,"triangle",.11,i*.13));
+}
+function soundWrong(){
+  if(!initAudio())return;
+  tone(260,.25,"sawtooth",.08,0,190);
+  tone(170,.3,"triangle",.06,.17,120);
+}
+function soundPrize(){
+  if(!initAudio())return;
+  [392,493.88,587.33,783.99,987.77,1174.66].forEach((n,i)=>tone(n,.8,"triangle",.09,i*.12));
+}
+function soundFinish(){
+  if(!initAudio())return;
+  [392,493.88,587.33,783.99,1046.5].forEach((n,i)=>tone(n,1,"triangle",.09,i*.2));
+}
+
+/* ĐIỀU KHIỂN GAME */
+const screens={
+  board:document.getElementById("boardScreen"),
+  question:document.getElementById("questionScreen"),
+  prize:document.getElementById("prizeScreen"),
+  finish:document.getElementById("finishScreen")
+};
+let opened=new Set(),currentIndex=null,mistakes=0,totalMistakes=0,correctCount=0;
+let answeredCorrectly=false;
+
+function showScreen(name){
+  Object.values(screens).forEach(s=>s.classList.remove("active"));
+  screens[name].classList.add("active");
+}
+function updateProgress(){
+  document.getElementById("boardProgress").textContent=`Đã mở ${opened.size}/7 hộp quà`;
+}
+function buildBoard(){
+  const grid=document.getElementById("boxGrid");
+  grid.innerHTML="";
+  gameData.forEach((data,index)=>{
+    if(opened.has(index))return;
+    const btn=document.createElement("button");
+    btn.className="treasure";
+    btn.type="button";
+    btn.setAttribute("aria-label",`Mở hộp số ${index+1}`);
+    const icon=document.createElement("span");
+    icon.className="chest";icon.textContent="🎁";
+    const label=document.createElement("span");
+    label.className="number";label.textContent=`HỘP SỐ ${index+1}`;
+    btn.append(icon,label);
+    btn.addEventListener("click",()=>{
+      initAudio();soundBox();openQuestion(index);
+    });
+    grid.appendChild(btn);
+  });
+  updateProgress();
+}
+function openQuestion(index){
+  currentIndex=index;mistakes=0;answeredCorrectly=false;
+  const data=gameData[index];
+  document.getElementById("questionProgress").textContent=`Hộp số ${index+1} • Câu ${opened.size+1}/7`;
+  document.getElementById("questionText").textContent=data.question;
+  const feedback=document.getElementById("feedback");
+  feedback.textContent="";feedback.className="feedback";
+  document.getElementById("retryBtn").hidden=true;
+  const answers=document.getElementById("answers");
+  answers.innerHTML="";
+  data.options.forEach((option,i)=>{
+    const btn=document.createElement("button");
+    btn.type="button";btn.className="answer";
+    btn.textContent=String.fromCharCode(65+i)+". "+option;
+    btn.addEventListener("click",()=>chooseAnswer(i,btn));
+    answers.appendChild(btn);
+  });
+  showScreen("question");
+}
+function chooseAnswer(index,button){
+  if(answeredCorrectly||button.disabled)return;
+  const data=gameData[currentIndex];
+  const feedback=document.getElementById("feedback");
+  if(index===data.correct){
+    answeredCorrectly=true;
+    document.querySelectorAll(".answer").forEach(b=>b.disabled=true);
+    button.classList.add("correct");
+    correctCount++;
+    feedback.textContent="✓ Chính xác! Bạn đã vượt qua thử thách!";
+    feedback.className="feedback good";
+    document.getElementById("retryBtn").hidden=true;
+    soundCorrect();
+    setTimeout(showPrize,850);
+  }else{
+    mistakes++;totalMistakes++;
+    button.classList.add("wrong");button.disabled=true;
+    feedback.textContent="✗ Chưa chính xác! Hãy thử một đáp án khác nhé.";
+    feedback.className="feedback bad";
+    soundWrong();
+    document.getElementById("retryBtn").hidden=false;
+  }
+}
+document.getElementById("retryBtn").addEventListener("click",()=>{
+  if(answeredCorrectly)return;
+  const feedback=document.getElementById("feedback");
+  feedback.textContent="Hãy suy nghĩ thật kỹ và chọn lại!";
+  feedback.className="feedback";
+  document.getElementById("retryBtn").hidden=true;
+  document.querySelectorAll(".answer.wrong").forEach(btn=>{
+    btn.disabled=false;btn.classList.remove("wrong");
+  });
+});
+function showPrize(){
+  if(!answeredCorrectly)return;
+  const prize=gameData[currentIndex].prize;
+  document.getElementById("prizeIcon").textContent=prize.icon;
+  document.getElementById("prizeName").textContent=prize.name;
+  document.getElementById("prizeDesc").textContent=prize.desc;
+  document.getElementById("prizeStats").innerHTML=
+    `<span class="score">🎯 Số câu trả lời sai trước khi đúng: ${mistakes}</span>`;
+  soundPrize();showScreen("prize");
+}
+document.getElementById("continueBtn").addEventListener("click",()=>{
+  opened.add(currentIndex);buildBoard();
+  if(opened.size===gameData.length){
+    document.getElementById("finalStats").innerHTML=
+      `<span class="score">🎁 Đã mở đủ 7 hộp</span>
+       <span class="score">✓ Hoàn thành ${correctCount} câu</span>
+       <span class="score">↻ Tổng lượt trả lời sai: ${totalMistakes}</span>`;
+    soundFinish();showScreen("finish");
+  }else showScreen("board");
+});
+document.getElementById("replayBtn").addEventListener("click",()=>{
+  opened=new Set();currentIndex=null;mistakes=0;totalMistakes=0;correctCount=0;
+  answeredCorrectly=false;musicStep=0;
+  buildBoard();showScreen("board");
+  if(musicEnabled)playMusicStep();
+});
+
+buildBoard();
+</script>
+</body>
+</html>
